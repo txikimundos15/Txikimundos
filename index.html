@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Txikimundos · Terrarios y ecosistemas vivos a medida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- CABECERA Y NAVEGACIÓN -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand" data-nav="inicio" aria-label="Txikimundos Inicio">
+        <div class="brand-logo-wrap">
+          <img src="img/logo.jpg" alt="Logo Txikimundos" class="brand-logo-img"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <!-- Emblema vectorial de respaldo mientras subes img/logo.jpg -->
+          <div class="brand-logo-fallback" style="display:none;">
+            <svg viewBox="0 0 64 64" width="38" height="38" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M44 13 A22 22 0 1 0 48 50" stroke-linecap="round"/>
+              <path d="M32 46 C32 33, 39 23, 51 20 C50 32, 41 40, 32 46 Z" />
+              <path d="M32 42 C30 34, 24 29, 17 28 C19 35, 25 40, 32 42 Z" />
+            </svg>
+          </div>
+        </div>
+        <span class="brand-name">TXIKIMUNDOS</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-link active" data-nav="inicio">Inicio</button>
+        <button class="nav-link" data-nav="configurador">Personaliza tu terrario</button>
+        <button class="nav-link" data-nav="historias">Historias</button>
+        <button class="nav-link" data-nav="cuidados">Cuidados y FAQ</button>
+      </nav>
+
+      <button class="btn btn-primary btn-sm header-cta" data-nav="configurador">
+        Diseñar el mío
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- =================================================================== -->
+    <!-- VISTA 1: INICIO                                                     -->
+    <!-- =================================================================== -->
+    <section id="view-inicio" class="view active">
+      <div class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow" id="hero-eyebrow">Ecosistemas vivos hechos a mano</span>
+            <h1 id="hero-title">Un pequeño mundo natural encerrado en cristal.</h1>
+            <p class="hero-lead" id="hero-subtitle"></p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-lg" data-nav="configurador">
+                Personaliza tu terrario
+              </button>
+              <button class="btn btn-secondary btn-lg" data-nav="historias">
+                Ver terrarios entregados
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <div class="photo-frame hero-photo-frame" data-photo-label="hero-terrario.jpg">
+              <img id="hero-img" src="img/hero-terrario.jpg" alt="Terrario artesanal Txikimundos"
+                   onerror="this.style.display='none'; this.parentElement.classList.add('is-placeholder');" />
+              <div class="photo-placeholder-content">
+                <span class="placeholder-icon">🌿</span>
+                <strong>Foto principal de portada</strong>
+                <span>Guarda tu imagen como <code>img/hero-terrario.jpg</code></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explicación del ecosistema -->
+      <section class="ecosystem-section">
+        <div class="container">
+          <div class="section-header centered">
+            <span class="eyebrow">¿Qué es un terrario?</span>
+            <h2>Un ecosistema autosuficiente en miniatura</h2>
+            <p>Más que una planta decorativa: es un pequeño ciclo natural vivo dentro de un recipiente de cristal.</p>
+          </div>
+
+          <div class="pillars-grid" id="pillars-container"></div>
+
+          <div class="cta-banner">
+            <div>
+              <h3>¿Listo para dar forma a tu propio paisaje?</h3>
+              <p>Elige el cristal, combina las plantas compatibles, añade minerales o troncos y decide el estilo de montaje.</p>
+            </div>
+            <button class="btn btn-primary btn-lg" data-nav="configurador">
+              Personaliza tu terrario
+            </button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 2: CONFIGURADOR A MEDIDA (ESTILO APPLE)                       -->
+    <!-- =================================================================== -->
+    <section id="view-configurador" class="view">
+      <div class="container configurator-header">
+        <span class="eyebrow">Taller interactivo</span>
+        <h1>Personaliza tu Txikimundo</h1>
+        <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
+      </div>
+
+      <!-- Aviso dinámico si al cambiar de recipiente se reajustan plantas -->
+      <div class="container">
+        <div id="compatibility-alert" class="toast-banner" hidden></div>
+      </div>
+
+      <div class="container configurator-layout" id="configurator-workspace">
+        <!-- COLUMNA IZQUIERDA: 4 PASOS -->
+        <div class="configurator-steps">
+          <!-- PASO 1: CRISTAL -->
+          <div class="step-block" id="step-cristal">
+            <div class="step-title-row">
+              <span class="step-badge">1</span>
+              <div>
+                <h2>Elige el recipiente de cristal</h2>
+                <p class="step-desc">El recipiente determina el espacio disponible y las especies compatibles.</p>
+              </div>
+            </div>
+            <div class="cards-grid cards-grid-3" id="containers-grid"></div>
+          </div>
+
+          <!-- PASO 2: PLANTAS -->
+          <div class="step-block" id="step-plantas">
+            <div class="step-title-row">
+              <span class="step-badge">2</span>
+              <div>
+                <h2>Selecciona tus plantas</h2>
+                <p class="step-desc">Las especies no compatibles con el cristal seleccionado aparecen atenuadas.</p>
+              </div>
+            </div>
+            <div id="plants-groups-container"></div>
+          </div>
+
+          <!-- PASO 3: COMPLEMENTOS -->
+          <div class="step-block" id="step-complementos">
+            <div class="step-title-row">
+              <span class="step-badge">3</span>
+              <div>
+                <h2>Añade complementos naturales</h2>
+                <p class="step-desc">Piedras proporcionadas al recipiente elegido y troncos naturales seleccionados artesanalmente.</p>
+              </div>
+            </div>
+            <div class="cards-grid cards-grid-2" id="accessories-grid"></div>
+          </div>
+
+          <!-- PASO 4: ESTILO -->
+          <div class="step-block" id="step-estilo">
+            <div class="step-title-row">
+              <span class="step-badge">4</span>
+              <div>
+                <h2>Define el estilo del paisaje</h2>
+                <p class="step-desc">¿Cómo quieres que estructuremos el relieve interior?</p>
+              </div>
+            </div>
+            <div class="cards-grid cards-grid-2" id="styles-grid"></div>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN FIJO ESTILO APPLE -->
+        <aside class="summary-sidebar" aria-label="Resumen de tu terrario">
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <span class="summary-kicker">Tu configuración</span>
+              <h3 id="summary-container-title">Txikihuevito</h3>
+              <p id="summary-style-subtitle" class="muted-small">Estilo: En pendiente</p>
+            </div>
+
+            <div class="summary-visual-preview">
+              <div class="photo-frame summary-photo-frame">
+                <img id="summary-preview-img" src="img/cristal-txikihuevito.jpg" alt="Vista previa recipiente"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder-mini" style="display:none;">
+                  <span>🪴</span>
+                  <small id="summary-photo-hint">img/cristal-txikihuevito.jpg</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-items-list" id="summary-items-list">
+              <!-- Se rellena dinámicamente -->
+            </div>
+
+            <div class="summary-total-box">
+              <div class="total-row">
+                <span>Total estimado</span>
+                <strong class="total-price" id="summary-total-price">28,00 €</strong>
+              </div>
+              <p class="total-note">Sin cargo inmediato. Confirmaremos detalles y pago tras recibir tu diseño.</p>
+              <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-go-checkout">
+                Continuar con mi pedido
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- FORMULARIO DE FINALIZACIÓN DE COMPRA -->
+      <div class="container checkout-section" id="checkout-section" hidden>
+        <div class="checkout-card">
+          <button type="button" class="btn-text-back" id="btn-back-configurator">
+            ← Volver a modificar mi terrario
+          </button>
+
+          <div class="checkout-grid">
+            <div class="checkout-form-col">
+              <span class="eyebrow">Último paso</span>
+              <h2>Tus datos para gestionar el pedido</h2>
+              <p class="step-desc">Te enviaremos un correo electrónico con el desglose completo de tu Txikimundo y te explicaremos los siguientes pasos para el pago y la entrega.</p>
+
+              <form id="order-form" novalidate>
+                <div class="form-group">
+                  <label for="cust-name">Nombre y apellidos *</label>
+                  <input type="text" id="cust-name" name="name" required placeholder="Ej. Ane Etxebarria" />
+                </div>
+
+                <div class="form-group">
+                  <label for="cust-phone">Teléfono de contacto *</label>
+                  <input type="tel" id="cust-phone" name="phone" required placeholder="Ej. 600 123 456" />
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="cust-email">Correo electrónico *</label>
+                    <input type="email" id="cust-email" name="email" required placeholder="tu@email.com" />
+                  </div>
+                  <div class="form-group">
+                    <label for="cust-email-confirm">Repite tu correo electrónico *</label>
+                    <input type="email" id="cust-email-confirm" name="emailConfirm" required placeholder="Repite tu email" />
+                    <small class="field-error" id="email-match-error" hidden>Los correos electrónicos no coinciden.</small>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="cust-notes">Notas adicionales (opcional)</label>
+                  <textarea id="cust-notes" name="notes" rows="2" placeholder="¿Es para un regalo? ¿Alguna preferencia especial?"></textarea>
+                </div>
+
+                <div class="checkboxes-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="consent-privacy" required />
+                    <span>
+                      He leído y acepto la <a href="#" id="open-privacy-link">Política de Privacidad</a> para la gestión de mi pedido. *
+                    </span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="consent-whatsapp" />
+                    <span>
+                      Autorizo a <strong>Txikimundos</strong> a utilizar mi teléfono para contactarme por <strong>WhatsApp</strong> y coordinar el pago y la entrega de mi terrario.
+                    </span>
+                  </label>
+                </div>
+
+                <div id="form-global-error" class="form-alert-error" hidden></div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit-order">
+                  Finalizar compra y enviar pedido
+                </button>
+              </form>
+            </div>
+
+            <div class="checkout-summary-col">
+              <div class="checkout-recap-box">
+                <h3>Resumen de tu pedido</h3>
+                <div id="checkout-recap-items"></div>
+                <div class="total-row recap-total">
+                  <span>Coste total</span>
+                  <strong id="checkout-recap-total">0,00 €</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANTALLA FINAL DE CONFIRMACIÓN DE COMPRA -->
+      <div class="container confirmation-section" id="confirmation-section" hidden>
+        <div class="confirmation-card">
+          <div class="confirmation-icon">✓</div>
+          <span class="eyebrow" id="conf-order-ref">Pedido registrado</span>
+          <h2>¡Gracias por diseñar tu Txikimundo!</h2>
+          <p class="confirmation-intro">
+            Hemos registrado tu configuración y te hemos enviado un correo electrónico de cortesía a <strong id="conf-customer-email"></strong> con todos los detalles de tu compra.
+          </p>
+
+          <div class="confirmation-box">
+            <h3>Detalle de tu compra</h3>
+            <div id="conf-items-list"></div>
+            <div class="total-row conf-total-row">
+              <span>Coste total</span>
+              <strong id="conf-total-price">0,00 €</strong>
+            </div>
+            <div class="conf-customer-meta" id="conf-customer-meta"></div>
+          </div>
+
+          <div class="next-steps-box">
+            <h3>¿Qué ocurre ahora?</h3>
+            <ol>
+              <li><strong>Revisa tu bandeja de entrada:</strong> Te llegará un correo de cortesía con la copia exacta de este resumen (revisa también la carpeta de promociones o spam por si acaso).</li>
+              <li><strong>Confirmación artesanal:</strong> Revisaremos tu composición y contactaremos contigo por correo electrónico (y por WhatsApp si nos has dado tu autorización) para confirmar disponibilidad, forma de pago y entrega o envío.</li>
+              <li><strong>Creación de tu terrario:</strong> Una vez confirmado, montaremos tu Txikimundo a mano y lo dejaremos aclimatar antes de entregártelo.</li>
+            </ol>
+          </div>
+
+          <div class="confirmation-actions">
+            <button type="button" class="btn btn-secondary" id="btn-new-design">
+              Diseñar otro terrario
+            </button>
+            <button type="button" class="btn btn-primary" data-nav="inicio">
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARRA INFERIOR FIJA EN MÓVIL -->
+      <div class="mobile-sticky-bar" id="mobile-sticky-bar">
+        <div>
+          <span class="mobile-bar-label">Total estimado</span>
+          <strong class="mobile-bar-price" id="mobile-total-price">28,00 €</strong>
+        </div>
+        <button type="button" class="btn btn-primary" id="mobile-btn-checkout">
+          Continuar pedido
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 3: HISTORIAS                                                  -->
+    <!-- =================================================================== -->
+    <section id="view-historias" class="view">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="eyebrow">Diario de taller</span>
+          <h1>Historias de Txikimundos entregados</h1>
+          <p>Cada recipiente guarda una historia y un rincón al que acompañar. Aquí compartimos algunas de nuestras creaciones entregadas.</p>
+        </div>
+
+        <div class="stories-grid" id="stories-grid"></div>
+
+        <div class="cta-banner">
+          <div>
+            <h3>¿Imaginas el tuyo en tu estantería o mesa?</h3>
+            <p>Empieza desde cero eligiendo el tamaño de cristal que mejor encaje con tu espacio.</p>
+          </div>
+          <button class="btn btn-primary btn-lg" data-nav="configurador">
+            Personaliza tu terrario
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 4: CUIDADOS Y PREGUNTAS FRECUENTES                            -->
+    <!-- =================================================================== -->
+    <section id="view-cuidados" class="view">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="eyebrow">Guía práctica</span>
+          <h1>Cuidados y Preguntas Frecuentes</h1>
+          <p>Todo lo que necesitas saber para mantener tu ecosistema sano y resolver tus dudas antes de encargar el tuyo.</p>
+        </div>
+
+        <div class="care-grid" id="care-grid"></div>
+
+        <div class="faq-wrapper">
+          <h2>Preguntas frecuentes</h2>
+          <div class="faq-list" id="faq-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>TXIKIMUNDOS</strong>
+        <p>Terrarios botánicos artesanales y ecosistemas vivos a medida.</p>
+      </div>
+      <div class="footer-links">
+        <button class="footer-link" data-nav="inicio">Inicio</button>
+        <button class="footer-link" data-nav="configurador">Configurador</button>
+        <button class="footer-link" data-nav="historias">Historias</button>
+        <button class="footer-link" data-nav="cuidados">Cuidados y FAQ</button>
+        <button class="footer-link" id="footer-privacy-btn">Aviso Legal y Privacidad</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL DE AVISO LEGAL Y POLÍTICA DE PRIVACIDAD -->
+  <div class="modal-backdrop" id="privacy-modal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title">
+      <div class="modal-header">
+        <h3 id="privacy-modal-title">Aviso Legal y Política de Privacidad</h3>
+        <button type="button" class="modal-close" id="close-privacy-modal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Responsable del tratamiento:</strong> Txikimundos ([Tu Nombre / Razón Social], NIF/CIF [Tu NIF], correo de contacto: hola@txikimundos.es).</p>
+        <p><strong>Finalidad:</strong> Gestionar la solicitud de presupuesto y pedido personalizado de terrarios realizada a través del configurador web, enviar el correo electrónico de confirmación y, únicamente en caso de marcar la casilla específica, contactar por WhatsApp para coordinar el pago y la entrega.</p>
+        <p><strong>Legitimación:</strong> Consentimiento expreso del interesado al enviar el formulario y ejecución de medidas precontractuales/contractuales.</p>
+        <p><strong>Destinatarios y conservación:</strong> Los datos no se ceden a terceros salvo obligación legal y se conservan únicamente durante el tiempo necesario para gestionar el pedido y atender posibles garantías o consultas.</p>
+        <p><strong>Derechos:</strong> Puedes solicitar el acceso, rectificación o supresión de tus datos escribiendo a nuestro correo electrónico de contacto.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

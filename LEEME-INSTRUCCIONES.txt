@@ -1,0 +1,56 @@
+====================================================================
+TXIKIMUNDOS · GUÍA RÁPIDA DE ARCHIVOS Y FOTOS
+====================================================================
+
+1. ESTRUCTURA DE CARPETAS (NO CAMBIAR LOS NOMBRES DE ARCHIVO)
+   - index.html    -> Estructura principal de la web
+   - styles.css    -> Diseño visual y colores de Txikimundos (#92A38C)
+   - config.js     -> Tus precios, textos, reglas de plantas y lista de historias
+   - app.js        -> Funcionamiento del configurador y formulario
+   - img/          -> Carpeta donde debes guardar todas tus fotografías
+
+2. LISTA EXACTA DE NOMBRES PARA TUS FOTOS (DENTRO DE LA CARPETA img/)
+   Cuando tengas las fotos listas, guárdalas en formato .jpg dentro de "img/"
+   con estos nombres exactos y aparecerán solas en la web:
+
+   [Marca y portada]
+   - logo.jpg                    (Tu logotipo circular verde salvia)
+   - hero-terrario.jpg           (Foto protagonista de la página de inicio)
+
+   [Recipientes de cristal]
+   - cristal-txikihuevito.jpg
+   - cristal-txikihuevo.jpg
+   - cristal-txikibola.jpg
+   - cristal-txikimatraz.jpg
+   - cristal-txikibotella.jpg
+   - cristal-txikimax.jpg
+
+   [Plantas]
+   - planta-fitonia-verde.jpg
+   - planta-fitonia-blanca.jpg
+   - planta-fitonia-roja.jpg
+   - planta-helecho.jpg
+   - planta-esparraguera.jpg
+   - planta-maranta.jpg
+   - planta-calathea.jpg
+   - planta-hiedra.jpg
+
+   [Complementos]
+   - comp-piedra-peq-blanca.jpg
+   - comp-piedra-peq-oscura.jpg
+   - comp-piedra-med-blanca.jpg
+   - comp-piedra-med-oscura.jpg
+   - comp-piedra-gra-blanca.jpg
+   - comp-piedra-gra-oscura.jpg
+   - comp-tronco.jpg
+
+   [Estilos de paisaje]
+   - estilo-pendiente.jpg
+   - estilo-plano.jpg
+   - estilo-montana.jpg
+   - estilo-sorpresa.jpg
+
+   [Historias de terrarios entregados]
+   - historia-01.jpg
+   - historia-02.jpg
+   - historia-03.jpg
