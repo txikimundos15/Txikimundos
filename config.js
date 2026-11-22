@@ -9,7 +9,7 @@ const TXIKI_CONFIG = {
   marca: "Txikimundos",
   emailContacto: "hola@txikimundos.es", // Cámbialo por tu email real cuando quieras
   // Cuando configuremos Google Sheets + Gmail, pegaremos aquí la URL del script:
-  googleScriptUrl: "",
+  googleScriptUrl: "https://script.google.com/macros/s/AKfycbxCRWMxd6aNO1NnWTjxcAeVvOr7fJsop88_ivBf-61nGWTTCtVvBPMQoCyWwPyo4xCV/exec",
 
   // 2. TEXTOS DE PORTADA (INICIO)
   inicio: {
