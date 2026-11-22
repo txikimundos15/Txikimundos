@@ -1,26 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Txikimundos · Terrarios y ecosistemas vivos a medida</title>
-
-  <!-- Favicons -->
-  <link rel="icon" href="img/favicon/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32.png" />
-  <link rel="apple-touch-icon" href="img/favicon/apple-touch-icon.png" />
-
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <!-- CABECERA Y NAVEGACIÓN -->
   <header class="site-header">
@@ -29,7 +17,6 @@
         <div class="brand-logo-wrap">
           <img src="img/logo.jpg" alt="Logo Txikimundos" class="brand-logo-img"
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <!-- Emblema vectorial de respaldo mientras subes img/logo.jpg -->
           <div class="brand-logo-fallback" style="display:none;">
             <svg viewBox="0 0 64 64" width="38" height="38" fill="none" stroke="currentColor" stroke-width="2.4">
               <path d="M44 13 A22 22 0 1 0 48 50" stroke-linecap="round"/>
@@ -117,17 +104,25 @@
     <!-- VISTA 2: CONFIGURADOR A MEDIDA (ESTILO APPLE)                       -->
     <!-- =================================================================== -->
     <section id="view-configurador" class="view">
-      <div class="container configurator-header">
-        <span class="eyebrow">Taller interactivo</span>
-        <h1>Personaliza tu Txikimundo</h1>
-        <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
+      <div class="container configurator-header" id="configurator-header">
+        <div class="configurator-header-row">
+          <div>
+            <span class="eyebrow">Taller interactivo</span>
+            <h1>Personaliza tu Txikimundo</h1>
+            <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm btn-reset-top" id="btn-reset-top" title="Borrar selección y volver al principio">
+            ↺ Empezar de nuevo
+          </button>
+        </div>
       </div>
 
-      <!-- Aviso dinámico si al cambiar de recipiente se reajustan plantas -->
+      <!-- Aviso dinámico si al cambiar de recipiente se reajustan plantas o se reinicia -->
       <div class="container">
         <div id="compatibility-alert" class="toast-banner" hidden></div>
       </div>
 
+      <!-- PASO DE CONFIGURACIÓN (OCULTO AUTOMÁTICAMENTE AL PASAR A DATOS O CONFIRMACIÓN) -->
       <div class="container configurator-layout" id="configurator-workspace">
         <!-- COLUMNA IZQUIERDA: 4 PASOS -->
         <div class="configurator-steps">
@@ -213,17 +208,25 @@
               <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-go-checkout">
                 Continuar con mi pedido
               </button>
+              <button type="button" class="btn-reset-link" id="btn-reset-summary">
+                ↺ Empezar de nuevo
+              </button>
             </div>
           </div>
         </aside>
       </div>
 
-      <!-- FORMULARIO DE FINALIZACIÓN DE COMPRA -->
+      <!-- FORMULARIO DE FINALIZACIÓN DE COMPRA (APARECE ARRIBA AL OCULTARSE EL CONFIGURADOR) -->
       <div class="container checkout-section" id="checkout-section" hidden>
         <div class="checkout-card">
-          <button type="button" class="btn-text-back" id="btn-back-configurator">
-            ← Volver a modificar mi terrario
-          </button>
+          <div class="checkout-top-actions">
+            <button type="button" class="btn-text-back" id="btn-back-configurator">
+              ← Volver a modificar mi terrario
+            </button>
+            <button type="button" class="btn-text-reset" id="btn-reset-checkout">
+              ↺ Empezar de nuevo desde cero
+            </button>
+          </div>
 
           <div class="checkout-grid">
             <div class="checkout-form-col">
@@ -297,7 +300,7 @@
         </div>
       </div>
 
-      <!-- PANTALLA FINAL DE CONFIRMACIÓN DE COMPRA -->
+      <!-- PANTALLA FINAL DE CONFIRMACIÓN DE COMPRA (APARECE ARRIBA DEL TODO) -->
       <div class="container confirmation-section" id="confirmation-section" hidden>
         <div class="confirmation-card">
           <div class="confirmation-icon">✓</div>
@@ -306,6 +309,10 @@
           <p class="confirmation-intro">
             Hemos registrado tu configuración y te hemos enviado un correo electrónico de cortesía a <strong id="conf-customer-email"></strong> con todos los detalles de tu compra.
           </p>
+
+          <div class="spam-notice-box" role="status">
+            <strong>📩 Revisa tu carpeta de Spam o Correo no deseado:</strong> Si no ves el mensaje en tu bandeja principal en los próximos minutos, comprueba esa carpeta por si tu gestor de correo lo ha filtrado allí.
+          </div>
 
           <div class="confirmation-box">
             <h3>Detalle de tu compra</h3>
@@ -320,7 +327,7 @@
           <div class="next-steps-box">
             <h3>¿Qué ocurre ahora?</h3>
             <ol>
-              <li><strong>Revisa tu bandeja de entrada:</strong> Te llegará un correo de cortesía con la copia exacta de este resumen (revisa también la carpeta de promociones o spam por si acaso).</li>
+              <li><strong>Revisa tu correo (incluida la carpeta Spam):</strong> Te llegará un mensaje de cortesía con la copia exacta de este resumen.</li>
               <li><strong>Confirmación artesanal:</strong> Revisaremos tu composición y contactaremos contigo por correo electrónico (y por WhatsApp si nos has dado tu autorización) para confirmar disponibilidad, forma de pago y entrega o envío.</li>
               <li><strong>Creación de tu terrario:</strong> Una vez confirmado, montaremos tu Txikimundo a mano y lo dejaremos aclimatar antes de entregártelo.</li>
             </ol>
@@ -328,7 +335,7 @@
 
           <div class="confirmation-actions">
             <button type="button" class="btn btn-secondary" id="btn-new-design">
-              Diseñar otro terrario
+              ↺ Empezar un nuevo pedido
             </button>
             <button type="button" class="btn btn-primary" data-nav="inicio">
               Volver al inicio
@@ -337,15 +344,20 @@
         </div>
       </div>
 
-      <!-- BARRA INFERIOR FIJA EN MÓVIL -->
+      <!-- BARRA INFERIOR FIJA EN MÓVIL (SOLO VISIBLE MIENTRAS SE CONFIGURA) -->
       <div class="mobile-sticky-bar" id="mobile-sticky-bar">
         <div>
           <span class="mobile-bar-label">Total estimado</span>
           <strong class="mobile-bar-price" id="mobile-total-price">28,00 €</strong>
         </div>
-        <button type="button" class="btn btn-primary" id="mobile-btn-checkout">
-          Continuar pedido
-        </button>
+        <div class="mobile-bar-actions">
+          <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-reset" title="Empezar de nuevo">
+            ↺
+          </button>
+          <button type="button" class="btn btn-primary" id="mobile-btn-checkout">
+            Continuar pedido
+          </button>
+        </div>
       </div>
     </section>
 

@@ -14,8 +14,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const formatPrice = (num) =>
     num.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
+  const workspaceEl = document.getElementById("configurator-workspace");
+  const checkoutEl = document.getElementById("checkout-section");
+  const confirmationEl = document.getElementById("confirmation-section");
+  const mobileBarEl = document.getElementById("mobile-sticky-bar");
+  const headerResetBtn = document.getElementById("btn-reset-top");
+
+  function syncConfiguratorSubViews() {
+    const inWorkspace = !workspaceEl.hidden;
+    if (mobileBarEl) {
+      const viewConfActive = document.getElementById("view-configurador").classList.contains("active");
+      mobileBarEl.hidden = !viewConfActive || !inWorkspace;
+    }
+    if (headerResetBtn) {
+      headerResetBtn.hidden = !inWorkspace;
+    }
+  }
+
   // --------------------------------------------------------------------------
-  // 1. NAVEGACIÓN ENTRE SECCIONES (Compatible con historial de GitHub Pages)
+  // 1. NAVEGACIÓN ENTRE SECCIONES
   // --------------------------------------------------------------------------
   const views = ["inicio", "configurador", "historias", "cuidados"];
 
@@ -30,12 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.toggle("active", btn.dataset.nav === viewName);
     });
 
-    const mobileBar = document.getElementById("mobile-sticky-bar");
-    if (mobileBar) {
-      const checkoutOpen = !document.getElementById("checkout-section").hidden;
-      const confOpen = !document.getElementById("confirmation-section").hidden;
-      mobileBar.hidden = viewName !== "configurador" || checkoutOpen || confOpen;
-    }
+    syncConfiguratorSubViews();
 
     if (updateHash) {
       history.pushState(null, "", `#${viewName}`);
@@ -59,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. RENDERIZADO DE CONTENIDO ESTÁTICO DESDE CONFIG.JS
   // --------------------------------------------------------------------------
   function renderStaticSections() {
-    // Portada
     document.getElementById("hero-eyebrow").textContent = TXIKI_CONFIG.inicio.etiqueta;
     document.getElementById("hero-title").textContent = TXIKI_CONFIG.inicio.titulo;
     document.getElementById("hero-subtitle").textContent = TXIKI_CONFIG.inicio.subtitulo;
@@ -76,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    // Historias
     const storiesGrid = document.getElementById("stories-grid");
     storiesGrid.innerHTML = TXIKI_CONFIG.historias
       .map(
@@ -97,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    // Cuidados
     const careGrid = document.getElementById("care-grid");
     careGrid.innerHTML = TXIKI_CONFIG.cuidados
       .map(
@@ -109,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    // Preguntas frecuentes
     const faqList = document.getElementById("faq-list");
     faqList.innerHTML = TXIKI_CONFIG.faqs
       .map(
@@ -148,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let used = getGroupUsedCount(grupo.id);
 
       if (used > maxAllowed) {
-        // Recortamos empezando por las últimas plantas del grupo hasta cumplir el máximo
         for (let i = groupPlants.length - 1; i >= 0 && used > maxAllowed; i--) {
           const p = groupPlants[i];
           const current = state.plantas[p.id] || 0;
@@ -473,12 +480,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --------------------------------------------------------------------------
-  // 4. FLUJO DE CHECKOUT Y CONFIRMACIÓN DE COMPRA
+  // 4. REINICIO DE DISEÑO (EMPEZAR DE NUEVO) Y FLUJO DE CHECKOUT
   // --------------------------------------------------------------------------
-  const workspaceEl = document.getElementById("configurator-workspace");
-  const checkoutEl = document.getElementById("checkout-section");
-  const confirmationEl = document.getElementById("confirmation-section");
-  const mobileBarEl = document.getElementById("mobile-sticky-bar");
+  function resetConfigurator(showNotice = true) {
+    state.recipienteId = TXIKI_CONFIG.recipientes[0].id;
+    state.plantas = {};
+    state.complementos = {};
+    state.estiloId = TXIKI_CONFIG.estilos[0].id;
+
+    document.getElementById("order-form").reset();
+    document.getElementById("email-match-error").hidden = true;
+    document.getElementById("form-global-error").hidden = true;
+
+    checkoutEl.hidden = true;
+    confirmationEl.hidden = true;
+    workspaceEl.hidden = false;
+    syncConfiguratorSubViews();
+
+    renderAllConfigurator();
+
+    const alertBox = document.getElementById("compatibility-alert");
+    if (showNotice) {
+      alertBox.hidden = false;
+      alertBox.innerHTML = "Has reiniciado tu diseño. Puedes volver a configurar tu Txikimundo desde el paso 1.";
+    } else {
+      alertBox.hidden = true;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.getElementById("btn-reset-top").addEventListener("click", () => resetConfigurator(true));
+  document.getElementById("btn-reset-summary").addEventListener("click", () => resetConfigurator(true));
+  document.getElementById("btn-reset-checkout").addEventListener("click", () => resetConfigurator(true));
+  document.getElementById("mobile-btn-reset").addEventListener("click", () => resetConfigurator(true));
+  document.getElementById("btn-new-design").addEventListener("click", () => resetConfigurator(false));
 
   function openCheckout() {
     const { items, total } = getOrderBreakdown();
@@ -493,10 +529,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
     document.getElementById("checkout-recap-total").textContent = formatPrice(total);
 
+    document.getElementById("compatibility-alert").hidden = true;
     workspaceEl.hidden = true;
     confirmationEl.hidden = true;
     checkoutEl.hidden = false;
-    mobileBarEl.hidden = true;
+    syncConfiguratorSubViews();
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -505,8 +543,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btn-back-configurator").addEventListener("click", () => {
     checkoutEl.hidden = true;
+    confirmationEl.hidden = true;
     workspaceEl.hidden = false;
-    mobileBarEl.hidden = false;
+    syncConfiguratorSubViews();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   // Validación en tiempo real del doble correo electrónico
@@ -575,7 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.textContent = "Registrando tu pedido...";
 
     try {
-      // Si ya está conectada la URL de Google Apps Script, enviamos el pedido real
       if (TXIKI_CONFIG.googleScriptUrl) {
         await fetch(TXIKI_CONFIG.googleScriptUrl, {
           method: "POST",
@@ -585,7 +624,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Mostramos la pantalla final de compra
       document.getElementById("conf-order-ref").textContent = `Referencia de pedido: ${orderRef}`;
       document.getElementById("conf-customer-email").textContent = email;
       document.getElementById("conf-items-list").innerHTML = items
@@ -604,8 +642,11 @@ document.addEventListener("DOMContentLoaded", () => {
         ${notes ? `<br/><strong>Notas:</strong> ${notes}` : ""}
       `;
 
+      workspaceEl.hidden = true;
       checkoutEl.hidden = true;
       confirmationEl.hidden = false;
+      syncConfiguratorSubViews();
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       globalErr.textContent = "Hubo un problema de conexión al enviar el pedido. Inténtalo de nuevo.";
@@ -614,16 +655,6 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.disabled = false;
       submitBtn.textContent = "Finalizar compra y enviar pedido";
     }
-  });
-
-  document.getElementById("btn-new-design").addEventListener("click", () => {
-    state.plantas = {};
-    state.complementos = {};
-    document.getElementById("order-form").reset();
-    confirmationEl.hidden = true;
-    workspaceEl.hidden = false;
-    mobileBarEl.hidden = false;
-    renderAllConfigurator();
   });
 
   // --------------------------------------------------------------------------
@@ -647,6 +678,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inicialización
   renderStaticSections();
   renderAllConfigurator();
+  syncConfiguratorSubViews();
   const initialHash = window.location.hash.replace("#", "");
   if (views.includes(initialHash)) {
     navigateTo(initialHash, false);
