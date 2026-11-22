@@ -4,18 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Txikimundos · Terrarios y ecosistemas vivos a medida</title>
-  <!-- Favicons -->
-  <link rel="icon" href="img/favicon/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32.png" />
-  <link rel="apple-touch-icon" href="img/favicon/apple-touch-icon.png" />
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
-
 <body>
   <!-- CABECERA Y NAVEGACIÓN -->
   <header class="site-header">
@@ -111,14 +104,13 @@
     <!-- VISTA 2: CONFIGURADOR A MEDIDA (ESTILO APPLE)                       -->
     <!-- =================================================================== -->
     <section id="view-configurador" class="view">
+      <!-- CABECERA DEL CONFIGURADOR CON EL ÚNICO BOTÓN DE EMPEZAR DE NUEVO -->
       <div class="container configurator-header" id="configurator-header">
-        <div class="configurator-header-row">
-          <div>
-            <span class="eyebrow">Taller interactivo</span>
-            <h1>Personaliza tu Txikimundo</h1>
-            <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
-          </div>
-          <button type="button" class="btn btn-secondary btn-sm btn-reset-top" id="btn-reset-top" title="Borrar selección y volver al principio">
+        <span class="eyebrow">Taller interactivo</span>
+        <h1>Personaliza tu Txikimundo</h1>
+        <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
+        <div class="configurator-reset-row">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-top" title="Borrar selección y volver al principio">
             ↺ Empezar de nuevo
           </button>
         </div>
@@ -129,7 +121,7 @@
         <div id="compatibility-alert" class="toast-banner" hidden></div>
       </div>
 
-      <!-- PASO DE CONFIGURACIÓN (OCULTO AUTOMÁTICAMENTE AL PASAR A DATOS O CONFIRMACIÓN) -->
+      <!-- FASE 1: DISEÑO DEL TERRARIO -->
       <div class="container configurator-layout" id="configurator-workspace">
         <!-- COLUMNA IZQUIERDA: 4 PASOS -->
         <div class="configurator-steps">
@@ -215,23 +207,17 @@
               <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-go-checkout">
                 Continuar con mi pedido
               </button>
-              <button type="button" class="btn-reset-link" id="btn-reset-summary">
-                ↺ Empezar de nuevo
-              </button>
             </div>
           </div>
         </aside>
       </div>
 
-      <!-- FORMULARIO DE FINALIZACIÓN DE COMPRA (APARECE ARRIBA AL OCULTARSE EL CONFIGURADOR) -->
+      <!-- FASE 2: FORMULARIO DE FINALIZACIÓN DE COMPRA -->
       <div class="container checkout-section" id="checkout-section" hidden>
         <div class="checkout-card">
           <div class="checkout-top-actions">
             <button type="button" class="btn-text-back" id="btn-back-configurator">
               ← Volver a modificar mi terrario
-            </button>
-            <button type="button" class="btn-text-reset" id="btn-reset-checkout">
-              ↺ Empezar de nuevo desde cero
             </button>
           </div>
 
@@ -307,7 +293,7 @@
         </div>
       </div>
 
-      <!-- PANTALLA FINAL DE CONFIRMACIÓN DE COMPRA (APARECE ARRIBA DEL TODO) -->
+      <!-- FASE 3: PANTALLA FINAL DE CONFIRMACIÓN DE COMPRA -->
       <div class="container confirmation-section" id="confirmation-section" hidden>
         <div class="confirmation-card">
           <div class="confirmation-icon">✓</div>
@@ -341,9 +327,6 @@
           </div>
 
           <div class="confirmation-actions">
-            <button type="button" class="btn btn-secondary" id="btn-new-design">
-              ↺ Empezar un nuevo pedido
-            </button>
             <button type="button" class="btn btn-primary" data-nav="inicio">
               Volver al inicio
             </button>
@@ -357,14 +340,9 @@
           <span class="mobile-bar-label">Total estimado</span>
           <strong class="mobile-bar-price" id="mobile-total-price">28,00 €</strong>
         </div>
-        <div class="mobile-bar-actions">
-          <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-reset" title="Empezar de nuevo">
-            ↺
-          </button>
-          <button type="button" class="btn btn-primary" id="mobile-btn-checkout">
-            Continuar pedido
-          </button>
-        </div>
+        <button type="button" class="btn btn-primary" id="mobile-btn-checkout">
+          Continuar pedido
+        </button>
       </div>
     </section>
 
@@ -448,7 +426,7 @@
     </div>
   </div>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

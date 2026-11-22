@@ -11,23 +11,40 @@ document.addEventListener("DOMContentLoaded", () => {
     estiloId: TXIKI_CONFIG.estilos[0].id
   };
 
+  let currentSubView = "workspace"; // "workspace" | "checkout" | "confirmation"
+
   const formatPrice = (num) =>
     num.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
+  const headerEl = document.getElementById("configurator-header");
   const workspaceEl = document.getElementById("configurator-workspace");
   const checkoutEl = document.getElementById("checkout-section");
   const confirmationEl = document.getElementById("confirmation-section");
   const mobileBarEl = document.getElementById("mobile-sticky-bar");
-  const headerResetBtn = document.getElementById("btn-reset-top");
 
-  function syncConfiguratorSubViews() {
-    const inWorkspace = !workspaceEl.hidden;
+  function setSubView(mode) {
+    currentSubView = mode;
+    const isWorkspace = mode === "workspace";
+    const isCheckout = mode === "checkout";
+    const isConfirmation = mode === "confirmation";
+
+    headerEl.hidden = !isWorkspace;
+    headerEl.style.display = isWorkspace ? "" : "none";
+
+    workspaceEl.hidden = !isWorkspace;
+    workspaceEl.style.display = isWorkspace ? "" : "none";
+
+    checkoutEl.hidden = !isCheckout;
+    checkoutEl.style.display = isCheckout ? "" : "none";
+
+    confirmationEl.hidden = !isConfirmation;
+    confirmationEl.style.display = isConfirmation ? "" : "none";
+
     if (mobileBarEl) {
       const viewConfActive = document.getElementById("view-configurador").classList.contains("active");
-      mobileBarEl.hidden = !viewConfActive || !inWorkspace;
-    }
-    if (headerResetBtn) {
-      headerResetBtn.hidden = !inWorkspace;
+      const showMobileBar = viewConfActive && isWorkspace;
+      mobileBarEl.hidden = !showMobileBar;
+      mobileBarEl.style.display = showMobileBar ? "" : "none";
     }
   }
 
@@ -39,6 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function navigateTo(viewName, updateHash = true) {
     if (!views.includes(viewName)) viewName = "inicio";
 
+    // Si el usuario ya había finalizado un pedido y vuelve a entrar al configurador,
+    // le preparamos el taller limpio para un nuevo diseño.
+    if (viewName === "configurador" && currentSubView === "confirmation") {
+      resetConfigurator(false, false);
+    }
+
     document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
     const targetView = document.getElementById(`view-${viewName}`);
     if (targetView) targetView.classList.add("active");
@@ -47,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.toggle("active", btn.dataset.nav === viewName);
     });
 
-    syncConfiguratorSubViews();
+    setSubView(currentSubView);
 
     if (updateHash) {
       history.pushState(null, "", `#${viewName}`);
@@ -482,7 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   // 4. REINICIO DE DISEÑO (EMPEZAR DE NUEVO) Y FLUJO DE CHECKOUT
   // --------------------------------------------------------------------------
-  function resetConfigurator(showNotice = true) {
+  function resetConfigurator(showNotice = true, shouldScroll = true) {
     state.recipienteId = TXIKI_CONFIG.recipientes[0].id;
     state.plantas = {};
     state.complementos = {};
@@ -492,11 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("email-match-error").hidden = true;
     document.getElementById("form-global-error").hidden = true;
 
-    checkoutEl.hidden = true;
-    confirmationEl.hidden = true;
-    workspaceEl.hidden = false;
-    syncConfiguratorSubViews();
-
+    setSubView("workspace");
     renderAllConfigurator();
 
     const alertBox = document.getElementById("compatibility-alert");
@@ -507,14 +526,12 @@ document.addEventListener("DOMContentLoaded", () => {
       alertBox.hidden = true;
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (shouldScroll) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
-  document.getElementById("btn-reset-top").addEventListener("click", () => resetConfigurator(true));
-  document.getElementById("btn-reset-summary").addEventListener("click", () => resetConfigurator(true));
-  document.getElementById("btn-reset-checkout").addEventListener("click", () => resetConfigurator(true));
-  document.getElementById("mobile-btn-reset").addEventListener("click", () => resetConfigurator(true));
-  document.getElementById("btn-new-design").addEventListener("click", () => resetConfigurator(false));
+  document.getElementById("btn-reset-top").addEventListener("click", () => resetConfigurator(true, true));
 
   function openCheckout() {
     const { items, total } = getOrderBreakdown();
@@ -530,22 +547,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("checkout-recap-total").textContent = formatPrice(total);
 
     document.getElementById("compatibility-alert").hidden = true;
-    workspaceEl.hidden = true;
-    confirmationEl.hidden = true;
-    checkoutEl.hidden = false;
-    syncConfiguratorSubViews();
+    setSubView("checkout");
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    checkoutEl.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   document.getElementById("btn-go-checkout").addEventListener("click", openCheckout);
   document.getElementById("mobile-btn-checkout").addEventListener("click", openCheckout);
 
   document.getElementById("btn-back-configurator").addEventListener("click", () => {
-    checkoutEl.hidden = true;
-    confirmationEl.hidden = true;
-    workspaceEl.hidden = false;
-    syncConfiguratorSubViews();
+    setSubView("workspace");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
@@ -642,12 +653,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ${notes ? `<br/><strong>Notas:</strong> ${notes}` : ""}
       `;
 
-      workspaceEl.hidden = true;
-      checkoutEl.hidden = true;
-      confirmationEl.hidden = false;
-      syncConfiguratorSubViews();
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setSubView("confirmation");
+      confirmationEl.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       globalErr.textContent = "Hubo un problema de conexión al enviar el pedido. Inténtalo de nuevo.";
       globalErr.hidden = false;
@@ -678,7 +685,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inicialización
   renderStaticSections();
   renderAllConfigurator();
-  syncConfiguratorSubViews();
+  setSubView("workspace");
   const initialHash = window.location.hash.replace("#", "");
   if (views.includes(initialHash)) {
     navigateTo(initialHash, false);
