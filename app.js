@@ -1,5 +1,5 @@
 // ============================================================================
-// LÓGICA DE NAVEGACIÓN Y CONFIGURADOR DE TXIKIMUNDOS
+// LÓGICA DE NAVEGACIÓN, CONFIGURADOR Y CONTACTO DE TXIKIMUNDOS
 // ============================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -53,13 +53,38 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   // 1. NAVEGACIÓN ENTRE SECCIONES
   // --------------------------------------------------------------------------
-  const views = ["inicio", "configurador", "historias", "cuidados"];
+  const views = ["inicio", "configurador", "historias", "cuidados", "contactar"];
+
+  function resetContactView() {
+    const formWrapper = document.getElementById("contact-form-wrapper");
+    const contactConf = document.getElementById("contact-confirmation");
+    const contactForm = document.getElementById("contact-form");
+    const contactErr = document.getElementById("contact-form-error");
+
+    if (contactForm) contactForm.reset();
+    if (contactErr) contactErr.hidden = true;
+    if (formWrapper) {
+      formWrapper.hidden = false;
+      formWrapper.style.display = "";
+    }
+    if (contactConf) {
+      contactConf.hidden = true;
+      contactConf.style.display = "none";
+    }
+  }
 
   function navigateTo(viewName, updateHash = true) {
     if (!views.includes(viewName)) viewName = "inicio";
 
     if (viewName === "configurador" && currentSubView === "confirmation") {
       resetConfigurator(false, false);
+    }
+
+    if (viewName === "contactar") {
+      const contactConf = document.getElementById("contact-confirmation");
+      if (contactConf && !contactConf.hidden) {
+        resetContactView();
+      }
     }
 
     document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
@@ -97,6 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("hero-eyebrow").textContent = TXIKI_CONFIG.inicio.etiqueta;
     document.getElementById("hero-title").textContent = TXIKI_CONFIG.inicio.titulo;
     document.getElementById("hero-subtitle").textContent = TXIKI_CONFIG.inicio.subtitulo;
+
+    const directEmailEl = document.getElementById("contact-direct-email");
+    if (directEmailEl && TXIKI_CONFIG.emailContacto) {
+      directEmailEl.textContent = TXIKI_CONFIG.emailContacto;
+      directEmailEl.href = `mailto:${TXIKI_CONFIG.emailContacto}`;
+    }
 
     const pillarsContainer = document.getElementById("pillars-container");
     pillarsContainer.innerHTML = TXIKI_CONFIG.inicio.pilares
@@ -670,6 +701,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const orderRef = "TXK-" + Math.floor(100000 + Math.random() * 900000);
 
     const payload = {
+      tipo: "pedido",
       referencia: orderRef,
       fecha: new Date().toLocaleString("es-ES"),
       cliente: { nombre: name, telefono: phone, email, notas: notes },
@@ -722,13 +754,123 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. MODAL DE POLÍTICA DE PRIVACIDAD
+  // 5. FORMULARIO DE CONTACTO (DOBLE CORREO AUTOMÁTICO)
+  // --------------------------------------------------------------------------
+  const contactForm = document.getElementById("contact-form");
+  const contactFormWrapper = document.getElementById("contact-form-wrapper");
+  const contactConfirmation = document.getElementById("contact-confirmation");
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  if (contactForm) {
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const contactErr = document.getElementById("contact-form-error");
+      contactErr.hidden = true;
+
+      const name = document.getElementById("contact-name").value.trim();
+      const email = document.getElementById("contact-email").value.trim();
+      const phone = document.getElementById("contact-phone").value.trim();
+      const message = document.getElementById("contact-message").value.trim();
+      const privacyOk = document.getElementById("contact-privacy").checked;
+
+      if (!name || !email || !message) {
+        contactErr.textContent = "Por favor, completa tu nombre, correo electrónico y mensaje.";
+        contactErr.hidden = false;
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        contactErr.textContent = "Por favor, introduce un correo electrónico válido.";
+        contactErr.hidden = false;
+        return;
+      }
+
+      if (!privacyOk) {
+        contactErr.textContent = "Debes aceptar la Política de Privacidad para poder enviar tu consulta.";
+        contactErr.hidden = false;
+        return;
+      }
+
+      const payload = {
+        tipo: "contacto",
+        fecha: new Date().toLocaleString("es-ES"),
+        cliente: {
+          nombre: name,
+          email: email,
+          telefono: phone || "No indicado"
+        },
+        mensaje: message
+      };
+
+      const submitBtn = document.getElementById("btn-submit-contact");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Enviando mensaje...";
+
+      try {
+        if (TXIKI_CONFIG.googleScriptUrl) {
+          await fetch(TXIKI_CONFIG.googleScriptUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        document.getElementById("contact-conf-email").textContent = email;
+        document.getElementById("contact-conf-meta").innerHTML = `
+          <strong>Nombre:</strong> ${escapeHtml(name)}<br/>
+          <strong>Correo electrónico:</strong> ${escapeHtml(email)}<br/>
+          ${phone ? `<strong>Teléfono:</strong> ${escapeHtml(phone)}<br/>` : ""}
+          <strong>Consulta enviada:</strong><br/>
+          <span style="display:inline-block; margin-top:6px; white-space:pre-line; color:var(--text-main);">${escapeHtml(message)}</span>
+        `;
+
+        contactFormWrapper.hidden = true;
+        contactFormWrapper.style.display = "none";
+        contactConfirmation.hidden = false;
+        contactConfirmation.style.display = "";
+        contactConfirmation.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (err) {
+        contactErr.textContent = "Hubo un problema de conexión al enviar tu mensaje. Inténtalo de nuevo.";
+        contactErr.hidden = false;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Enviar mensaje";
+      }
+    });
+  }
+
+  const resetContactBtn = document.getElementById("btn-reset-contact");
+  if (resetContactBtn) {
+    resetContactBtn.addEventListener("click", () => {
+      resetContactView();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // 6. MODAL DE POLÍTICA DE PRIVACIDAD
   // --------------------------------------------------------------------------
   const privacyModal = document.getElementById("privacy-modal");
   document.getElementById("open-privacy-link").addEventListener("click", (e) => {
     e.preventDefault();
     privacyModal.hidden = false;
   });
+  const openContactPrivacy = document.getElementById("open-contact-privacy-link");
+  if (openContactPrivacy) {
+    openContactPrivacy.addEventListener("click", (e) => {
+      e.preventDefault();
+      privacyModal.hidden = false;
+    });
+  }
   document.getElementById("footer-privacy-btn").addEventListener("click", () => {
     privacyModal.hidden = false;
   });

@@ -39,11 +39,8 @@
         <button class="nav-link" data-nav="configurador">Personaliza tu terrario</button>
         <button class="nav-link" data-nav="historias">Historias</button>
         <button class="nav-link" data-nav="cuidados">Cuidados y FAQ</button>
+        <button class="nav-link" data-nav="contactar">Contactar</button>
       </nav>
-
-      <button class="btn btn-primary btn-sm header-cta" data-nav="configurador">
-        Diseñar el mío
-      </button>
     </div>
   </header>
 
@@ -396,6 +393,129 @@
         <div class="faq-wrapper">
           <h2>Preguntas frecuentes</h2>
           <div class="faq-list" id="faq-list"></div>
+
+          <div class="faq-contact-nudge">
+            <p>¿Tienes alguna otra duda sobre envíos, regalos o el cuidado de tu terrario?</p>
+            <button type="button" class="btn btn-secondary" data-nav="contactar">
+              Escríbenos desde Contactar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 5: CONTACTAR                                                  -->
+    <!-- =================================================================== -->
+    <section id="view-contactar" class="view">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="eyebrow">Hablemos</span>
+          <h1>Contacta con Txikimundos</h1>
+          <p>Si tienes alguna duda antes de encargar tu terrario, quieres hacernos una consulta sobre cuidados o buscas un regalo especial, escríbenos y te responderemos lo antes posible.</p>
+        </div>
+
+        <!-- FORMULARIO DE CONTACTO -->
+        <div class="contact-card" id="contact-form-wrapper">
+          <div class="contact-grid">
+            <div class="contact-form-col">
+              <h2>Envíanos tu consulta</h2>
+              <p class="step-desc">Completa los siguientes datos y recibirás una copia de cortesía en tu correo electrónico.</p>
+
+              <form id="contact-form" novalidate>
+                <div class="form-group">
+                  <label for="contact-name">Nombre y apellidos *</label>
+                  <input type="text" id="contact-name" name="contactName" required placeholder="Ej. Mikel Mendizabal" />
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="contact-email">Correo electrónico *</label>
+                    <input type="email" id="contact-email" name="contactEmail" required placeholder="tu@email.com" />
+                  </div>
+                  <div class="form-group">
+                    <label for="contact-phone">Teléfono (opcional)</label>
+                    <input type="tel" id="contact-phone" name="contactPhone" placeholder="Ej. 600 123 456" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-message">¿En qué podemos ayudarte? *</label>
+                  <textarea id="contact-message" name="contactMessage" rows="5" required placeholder="Cuéntanos tu duda sobre tamaños, plantas, plazos de entrega o cualquier otra consulta..."></textarea>
+                </div>
+
+                <div class="checkboxes-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="contact-privacy" required />
+                    <span>
+                      He leído y acepto la <a href="#" id="open-contact-privacy-link">Política de Privacidad</a> para que podamos responder a mi consulta. *
+                    </span>
+                  </label>
+                </div>
+
+                <div id="contact-form-error" class="form-alert-error" hidden></div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit-contact">
+                  Enviar mensaje
+                </button>
+              </form>
+            </div>
+
+            <aside class="contact-info-col">
+              <div class="contact-info-box">
+                <span class="summary-kicker">Atención artesanal</span>
+                <h3>Estamos al otro lado</h3>
+                <p>Cada mensaje llega directamente a nuestro taller. Revisamos todas las consultas y te respondemos personalmente tan pronto como podemos.</p>
+
+                <div class="contact-detail-item">
+                  <strong>Correo directo</strong>
+                  <a id="contact-direct-email" href="mailto:hola@txikimundos.es">hola@txikimundos.es</a>
+                </div>
+
+                <div class="contact-detail-item">
+                  <strong>Correo de confirmación</strong>
+                  <span>Al enviar el formulario recibirás al instante un email de cortesía confirmando que hemos recibido tu mensaje.</span>
+                </div>
+
+                <div class="contact-quick-links">
+                  <button type="button" class="btn btn-secondary btn-sm btn-block" data-nav="cuidados">
+                    Ver guía de cuidados y FAQ
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm btn-block" data-nav="configurador">
+                    Ir al personalizador de terrarios
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- PANTALLA DE CONFIRMACIÓN DE CONTACTO -->
+        <div class="confirmation-card" id="contact-confirmation" hidden>
+          <div class="confirmation-icon">✓</div>
+          <span class="eyebrow">Consulta enviada</span>
+          <h2>¡Gracias por escribirnos!</h2>
+          <p class="confirmation-intro">
+            Hemos recibido tu mensaje correctamente y te hemos enviado un correo electrónico de cortesía a <strong id="contact-conf-email"></strong> agradeciéndote tu consulta. Tan pronto como podamos nos pondremos en contacto contigo para responderte.
+          </p>
+
+          <div class="spam-notice-box" role="status">
+            <strong>📩 Revisa tu carpeta de Spam o Correo no deseado:</strong> Si no ves el mensaje de cortesía en tu bandeja principal en los próximos minutos, revisa esa carpeta por si tu gestor de correo lo ha filtrado allí.
+          </div>
+
+          <div class="confirmation-box">
+            <h3>Resumen de tu mensaje</h3>
+            <div class="conf-customer-meta" id="contact-conf-meta" style="margin-top:0; padding-top:0; border-top:none;"></div>
+          </div>
+
+          <div class="confirmation-actions">
+            <button type="button" class="btn btn-primary" data-nav="inicio">
+              Volver al inicio
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-reset-contact">
+              Enviar otra consulta
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -413,6 +533,7 @@
         <button class="footer-link" data-nav="configurador">Configurador</button>
         <button class="footer-link" data-nav="historias">Historias</button>
         <button class="footer-link" data-nav="cuidados">Cuidados y FAQ</button>
+        <button class="footer-link" data-nav="contactar">Contactar</button>
         <button class="footer-link" id="footer-privacy-btn">Aviso Legal y Privacidad</button>
       </div>
     </div>
@@ -427,9 +548,9 @@
       </div>
       <div class="modal-body">
         <p><strong>Responsable del tratamiento:</strong> Txikimundos ([Tu Nombre / Razón Social], NIF/CIF [Tu NIF], correo de contacto: hola@txikimundos.es).</p>
-        <p><strong>Finalidad:</strong> Gestionar la solicitud de presupuesto y pedido personalizado de terrarios realizada a través del configurador web, enviar el correo electrónico de confirmación y, únicamente en caso de marcar la casilla específica, contactar por WhatsApp para coordinar el pago y la entrega.</p>
+        <p><strong>Finalidad:</strong> Gestionar las consultas enviadas a través del formulario de contacto y las solicitudes de pedido personalizado de terrarios, enviar el correo electrónico de confirmación y, únicamente en caso de marcar la casilla específica en un pedido, contactar por WhatsApp para coordinar el pago y la entrega.</p>
         <p><strong>Legitimación:</strong> Consentimiento expreso del interesado al enviar el formulario y ejecución de medidas precontractuales/contractuales.</p>
-        <p><strong>Destinatarios y conservación:</strong> Los datos no se ceden a terceros salvo obligación legal y se conservan únicamente durante el tiempo necesario para gestionar el pedido y atender posibles garantías o consultas.</p>
+        <p><strong>Destinatarios y conservación:</strong> Los datos no se ceden a terceros salvo obligación legal y se conservan únicamente durante el tiempo necesario para responder a tu consulta o gestionar el pedido.</p>
         <p><strong>Derechos:</strong> Puedes solicitar el acceso, rectificación o supresión de tus datos escribiendo a nuestro correo electrónico de contacto.</p>
       </div>
     </div>
