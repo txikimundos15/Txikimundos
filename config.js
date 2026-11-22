@@ -9,7 +9,7 @@ const TXIKI_CONFIG = {
   marca: "Txikimundos",
   emailContacto: "hola@txikimundos.es", // Cámbialo por tu email real cuando quieras
   // Cuando configuremos Google Sheets + Gmail, pegaremos aquí la URL del script:
-  googleScriptUrl: "https://script.google.com/macros/s/AKfycbxCRWMxd6aNO1NnWTjxcAeVvOr7fJsop88_ivBf-61nGWTTCtVvBPMQoCyWwPyo4xCV/exec",
+  googleScriptUrl: "",
 
   // 2. TEXTOS DE PORTADA (INICIO)
   inicio: {
@@ -38,7 +38,7 @@ const TXIKI_CONFIG = {
   },
 
   // 3. RECIPIENTES DE CRISTAL (PASO 1)
-  // Nota: Los precios actuales son provisionales para pruebas. Cámbialos cuando los tengas.
+  // permiteEstilo: true solo en los modelos amplios donde se puede elegir relieve
   recipientes: [
     {
       id: "txikihuevito",
@@ -46,6 +46,7 @@ const TXIKI_CONFIG = {
       medidas: "Ø 12 cm · Alto 15 cm (aprox.)",
       descripcion: "Formato compacto y delicado, ideal para escritorios o pequeños detalles.",
       precio: 28,
+      permiteEstilo: false,
       imagen: "img/cristal-txikihuevito.jpg"
     },
     {
@@ -54,6 +55,7 @@ const TXIKI_CONFIG = {
       medidas: "Ø 16 cm · Alto 20 cm (aprox.)",
       descripcion: "Silueta ovalada equilibrada que permite jugar con alturas y musgos.",
       precio: 38,
+      permiteEstilo: false,
       imagen: "img/cristal-txikihuevo.jpg"
     },
     {
@@ -62,6 +64,7 @@ const TXIKI_CONFIG = {
       medidas: "Ø 18 cm · Alto 17 cm (aprox.)",
       descripcion: "Esfera luminosa con visión envolvente de 360 grados.",
       precio: 42,
+      permiteEstilo: false,
       imagen: "img/cristal-txikibola.jpg"
     },
     {
@@ -70,6 +73,7 @@ const TXIKI_CONFIG = {
       medidas: "Ø 20 cm · Alto 26 cm (aprox.)",
       descripcion: "Inspirado en los matraces botánicos clásicos, con cuello estrecho y gran base.",
       precio: 54,
+      permiteEstilo: true,
       imagen: "img/cristal-txikimatraz.jpg"
     },
     {
@@ -78,6 +82,7 @@ const TXIKI_CONFIG = {
       medidas: "Ø 19 cm · Alto 30 cm (aprox.)",
       descripcion: "Verticalidad elegante para composiciones frondosas de porte medio.",
       precio: 58,
+      permiteEstilo: true,
       imagen: "img/cristal-txikibotella.jpg"
     },
     {
@@ -86,14 +91,12 @@ const TXIKI_CONFIG = {
       medidas: "Ø 26 cm · Alto 34 cm (aprox.)",
       descripcion: "Nuestro formato más amplio para crear auténticos bosques en miniatura.",
       precio: 79,
+      permiteEstilo: true,
       imagen: "img/cristal-txikimax.jpg"
     }
   ],
 
   // 4. GRUPOS DE PLANTAS Y REGLAS DE COMPATIBILIDAD (PASO 2)
-  // Basado exactamente en tu tabla:
-  // - grupoId agrupa las plantas que comparten límite máximo en un mismo recipiente.
-  // - maximoPorRecipiente define cuántas unidades del grupo caben (0 = incompatible).
   gruposPlantas: [
     {
       id: "grupo_fitonias",
@@ -113,7 +116,7 @@ const TXIKI_CONFIG = {
       nombre: "Grupo 2 · Helechos",
       descripcion: "Frondas ligeras que aportan volumen y textura silvestre.",
       maximoPorRecipiente: {
-        txikihuevito: 0, // Incompatible (x)
+        txikihuevito: 0,
         txikihuevo: 1,
         txikibola: 1,
         txikimatraz: 1,
@@ -126,12 +129,12 @@ const TXIKI_CONFIG = {
       nombre: "Grupo 3 · Porte medio (Esparraguera, Maranta, Calathea)",
       descripcion: "Especies protagonistas de mayor desarrollo para recipientes amplios.",
       maximoPorRecipiente: {
-        txikihuevito: 0, // Incompatible (x)
-        txikihuevo: 0,   // Incompatible (x)
-        txikibola: 0,    // Incompatible (x)
-        txikimatraz: 1,  // 1 a elegir entre Esparraguera, Maranta o Calathea
-        txikibotella: 1, // 1 a elegir entre Esparraguera, Maranta o Calathea
-        txikimax: 2      // Máximo 2 en total combinando este grupo
+        txikihuevito: 0,
+        txikihuevo: 0,
+        txikibola: 0,
+        txikimatraz: 1,
+        txikibotella: 1,
+        txikimax: 2
       }
     },
     {
@@ -139,7 +142,7 @@ const TXIKI_CONFIG = {
       nombre: "Grupo 4 · Trepadoras y tapizantes",
       descripcion: "Tallos flexibles que abrazan piedras, troncos y desniveles.",
       maximoPorRecipiente: {
-        txikihuevito: 0, // Incompatible (x)
+        txikihuevito: 0,
         txikihuevo: 1,
         txikibola: 1,
         txikimatraz: 2,
@@ -276,7 +279,7 @@ const TXIKI_CONFIG = {
     }
   ],
 
-  // 6. ESTILOS DE MONTAJE (PASO 4)
+  // 6. ESTILOS DE MONTAJE (PASO 4 · SOLO TXIKIMATRZ, TXIKIBOTELLA Y TXIKIMAX)
   estilos: [
     {
       id: "pendiente",
@@ -309,8 +312,6 @@ const TXIKI_CONFIG = {
   ],
 
   // 7. HISTORIAS DE TERRARIOS ENTREGADOS
-  // Para añadir una nueva historia en el futuro, copia uno de estos bloques {...},
-  // pégalo arriba del todo y cambia los textos y el nombre de la foto.
   historias: [
     {
       id: "hist-01",
@@ -325,9 +326,9 @@ const TXIKI_CONFIG = {
       id: "hist-02",
       fecha: "Entregado · Regalo especial",
       titulo: "Txikibola de aniversario con helecho y musgo",
-      recipiente: "Txikibola · Estilo montaña",
+      recipiente: "Txikibola · Acabado natural",
       texto:
-        "Un regalo pensado para durar años. El relieve central permite admirar la textura del helecho y la fitonia blanca desde cualquier lado de la mesa.",
+        "Un regalo pensado para durar años. Su forma esférica permite admirar la textura del helecho y la fitonia blanca desde cualquier lado de la mesa.",
       imagen: "img/historia-02.jpg"
     },
     {
@@ -369,7 +370,7 @@ const TXIKI_CONFIG = {
     {
       pregunta: "¿Cómo se realiza el pago y la entrega de mi pedido?",
       respuesta:
-        "Al finalizar tu diseño en la web no se realiza ningún cargo automático. Recibirás un correo con tu resumen y nos pondremos en contacto contigo (por email o WhatsApp, según nos autorices) para confirmar plazos de elaboración artesanal, método de pago y entrega o envío."
+        "Al finalizar tu diseño en la web no se realiza ningún cargo automático. Recibirás un correo con tu resumen (revisa tu carpeta de spam por si llegara allí) y nos pondremos en contacto contigo por email o WhatsApp, según nos autorices, para confirmar plazos de elaboración artesanal, método de pago y entrega o envío."
     },
     {
       pregunta: "¿Hacéis envíos o solo entrega en mano?",

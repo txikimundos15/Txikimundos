@@ -15,7 +15,6 @@
   <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <!-- CABECERA Y NAVEGACIÓN -->
   <header class="site-header">
@@ -115,7 +114,7 @@
       <div class="container configurator-header" id="configurator-header">
         <span class="eyebrow">Taller interactivo</span>
         <h1>Personaliza tu Txikimundo</h1>
-        <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas compatibles según el tamaño de cristal que elijas.</p>
+        <p>Configura cada elemento paso a paso. El sistema adapta automáticamente las plantas y estilos compatibles según el tamaño de cristal que elijas.</p>
         <div class="configurator-reset-row">
           <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-top" title="Borrar selección y volver al principio">
             ↺ Empezar de nuevo
@@ -123,7 +122,7 @@
         </div>
       </div>
 
-      <!-- Aviso dinámico si al cambiar de recipiente se reajustan plantas o se reinicia -->
+      <!-- Aviso dinámico si al cambiar de recipiente se reajustan plantas/estilo o se reinicia -->
       <div class="container">
         <div id="compatibility-alert" class="toast-banner" hidden></div>
       </div>
@@ -138,7 +137,7 @@
               <span class="step-badge">1</span>
               <div>
                 <h2>Elige el recipiente de cristal</h2>
-                <p class="step-desc">El recipiente determina el espacio disponible y las especies compatibles.</p>
+                <p class="step-desc">El recipiente determina el espacio disponible, las especies y los estilos compatibles.</p>
               </div>
             </div>
             <div class="cards-grid cards-grid-3" id="containers-grid"></div>
@@ -170,12 +169,15 @@
 
           <!-- PASO 4: ESTILO -->
           <div class="step-block" id="step-estilo">
-            <div class="step-title-row">
-              <span class="step-badge">4</span>
-              <div>
-                <h2>Define el estilo del paisaje</h2>
-                <p class="step-desc">¿Cómo quieres que estructuremos el relieve interior?</p>
+            <div class="step-title-row step-title-row-split">
+              <div class="step-title-main">
+                <span class="step-badge">4</span>
+                <div>
+                  <h2>Define el estilo del paisaje</h2>
+                  <p class="step-desc" id="step-estilo-desc">¿Cómo quieres que estructuremos el relieve interior?</p>
+                </div>
               </div>
+              <span class="group-quota-pill" id="step-estilo-badge">Disponible</span>
             </div>
             <div class="cards-grid cards-grid-2" id="styles-grid"></div>
           </div>
@@ -187,7 +189,7 @@
             <div class="summary-card-header">
               <span class="summary-kicker">Tu configuración</span>
               <h3 id="summary-container-title">Txikihuevito</h3>
-              <p id="summary-style-subtitle" class="muted-small">Estilo: En pendiente</p>
+              <p id="summary-style-subtitle" class="muted-small">Estilo: No disponible en este cristal</p>
             </div>
 
             <div class="summary-visual-preview">
@@ -433,7 +435,7 @@
     </div>
   </div>
 
-  <script src="config.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -3,12 +3,14 @@
 // ============================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
+  const defaultContainer = TXIKI_CONFIG.recipientes[0];
+
   // Estado actual del configurador
   const state = {
-    recipienteId: TXIKI_CONFIG.recipientes[0].id, // Txikihuevito por defecto
+    recipienteId: defaultContainer.id, // Txikihuevito por defecto (sin estilo)
     plantas: {},      // { "fitonia-verde": 2, ... }
     complementos: {}, // { "piedra-peq-blanca": 1, ... }
-    estiloId: TXIKI_CONFIG.estilos[0].id
+    estiloId: defaultContainer.permiteEstilo ? TXIKI_CONFIG.estilos[0].id : null
   };
 
   let currentSubView = "workspace"; // "workspace" | "checkout" | "confirmation"
@@ -56,8 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function navigateTo(viewName, updateHash = true) {
     if (!views.includes(viewName)) viewName = "inicio";
 
-    // Si el usuario ya había finalizado un pedido y vuelve a entrar al configurador,
-    // le preparamos el taller limpio para un nuevo diseño.
     if (viewName === "configurador" && currentSubView === "confirmation") {
       resetConfigurator(false, false);
     }
@@ -165,6 +165,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   // 3. MOTOR DE COMPATIBILIDADES Y CÁLCULO DEL CONFIGURADOR
   // --------------------------------------------------------------------------
+  function getCurrentContainer() {
+    return TXIKI_CONFIG.recipientes.find((r) => r.id === state.recipienteId);
+  }
+
+  function isStyleCompatible() {
+    const rec = getCurrentContainer();
+    return Boolean(rec && rec.permiteEstilo);
+  }
+
   function getGroupUsedCount(grupoId) {
     return TXIKI_CONFIG.plantas
       .filter((p) => p.grupoId === grupoId)
@@ -173,6 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function enforceCompatibilityOnContainerChange() {
     const adjustments = [];
+    const rec = getCurrentContainer();
+
+    // 1) Compatibilidad de plantas
     TXIKI_CONFIG.gruposPlantas.forEach((grupo) => {
       const maxAllowed = grupo.maximoPorRecipiente[state.recipienteId] ?? 0;
       const groupPlants = TXIKI_CONFIG.plantas.filter((p) => p.grupoId === grupo.id);
@@ -193,10 +205,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // 2) Compatibilidad de estilo (solo Txikimatraz, Txikibotella y Txikimax)
+    if (rec && rec.permiteEstilo) {
+      if (!state.estiloId) {
+        state.estiloId = TXIKI_CONFIG.estilos[0].id;
+      }
+    } else {
+      if (state.estiloId) {
+        const prevEstilo = TXIKI_CONFIG.estilos.find((e) => e.id === state.estiloId);
+        adjustments.push(`Estilo ${prevEstilo ? prevEstilo.nombre : ""} (no disponible en ${rec.nombre})`);
+      }
+      state.estiloId = null;
+    }
+
     const alertBox = document.getElementById("compatibility-alert");
     if (adjustments.length > 0) {
       alertBox.hidden = false;
-      alertBox.innerHTML = `Hemos adaptado automáticamente tu selección al espacio del nuevo recipiente: <strong>${adjustments.join(", ")}</strong>.`;
+      alertBox.innerHTML = `Hemos adaptado automáticamente tu selección al nuevo recipiente: <strong>${adjustments.join(", ")}</strong>.`;
     } else {
       alertBox.hidden = true;
     }
@@ -379,12 +404,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderStyles() {
+    const rec = getCurrentContainer();
+    const compatible = isStyleCompatible();
+    const descEl = document.getElementById("step-estilo-desc");
+    const badgeEl = document.getElementById("step-estilo-badge");
+
+    if (compatible) {
+      descEl.textContent = "¿Cómo quieres que estructuremos el relieve interior?";
+      badgeEl.textContent = `Disponible en ${rec.nombre}`;
+      badgeEl.classList.remove("is-incompatible");
+    } else {
+      descEl.textContent =
+        "La selección de estilo solo está disponible para los modelos Txikimatraz, Txikibotella y Txikimax.";
+      badgeEl.textContent = `No disponible en ${rec.nombre}`;
+      badgeEl.classList.add("is-incompatible");
+    }
+
     const grid = document.getElementById("styles-grid");
     grid.innerHTML = TXIKI_CONFIG.estilos
       .map((est) => {
-        const selected = est.id === state.estiloId;
+        const selected = compatible && est.id === state.estiloId;
         return `
-        <div class="option-card selectable ${selected ? "is-selected" : ""}" data-select-style="${est.id}">
+        <div class="option-card ${!compatible ? "is-disabled" : `selectable ${selected ? "is-selected" : ""}`}" ${
+          compatible ? `data-select-style="${est.id}"` : ""
+        }>
           <div>
             <div class="card-thumb">
               <img src="${est.imagen}" alt="${est.nombre}"
@@ -398,23 +441,32 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="option-desc">${est.descripcion}</p>
           </div>
           <div>
-            <span class="group-quota-pill">${selected ? "✓ Estilo elegido" : "Elegir estilo"}</span>
+            ${
+              compatible
+                ? `<span class="group-quota-pill">${selected ? "✓ Estilo elegido" : "Elegir estilo"}</span>`
+                : `<span class="incompat-badge">No compatible con este cristal</span>`
+            }
           </div>
         </div>`;
       })
       .join("");
 
-    grid.querySelectorAll("[data-select-style]").forEach((card) => {
-      card.addEventListener("click", () => {
-        state.estiloId = card.dataset.selectStyle;
-        renderAllConfigurator();
+    if (compatible) {
+      grid.querySelectorAll("[data-select-style]").forEach((card) => {
+        card.addEventListener("click", () => {
+          state.estiloId = card.dataset.selectStyle;
+          renderAllConfigurator();
+        });
       });
-    });
+    }
   }
 
   function getOrderBreakdown() {
-    const recipiente = TXIKI_CONFIG.recipientes.find((r) => r.id === state.recipienteId);
-    const estilo = TXIKI_CONFIG.estilos.find((e) => e.id === state.estiloId);
+    const recipiente = getCurrentContainer();
+    const compatibleEstilo = isStyleCompatible();
+    const estilo = compatibleEstilo
+      ? TXIKI_CONFIG.estilos.find((e) => e.id === state.estiloId) || TXIKI_CONFIG.estilos[0]
+      : null;
 
     const items = [
       {
@@ -449,12 +501,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    items.push({
-      categoria: "Estilo",
-      nombre: `Estilo ${estilo.nombre}`,
-      cantidad: 1,
-      subtotal: estilo.precio
-    });
+    if (estilo) {
+      items.push({
+        categoria: "Estilo",
+        nombre: `Estilo ${estilo.nombre}`,
+        cantidad: 1,
+        subtotal: estilo.precio
+      });
+    }
 
     const total = items.reduce((sum, item) => sum + item.subtotal, 0);
     return { recipiente, estilo, items, total };
@@ -464,7 +518,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const { recipiente, estilo, items, total } = getOrderBreakdown();
 
     document.getElementById("summary-container-title").textContent = recipiente.nombre;
-    document.getElementById("summary-style-subtitle").textContent = `Estilo: ${estilo.nombre}`;
+    document.getElementById("summary-style-subtitle").textContent = estilo
+      ? `Estilo: ${estilo.nombre}`
+      : "Estilo: No disponible en este cristal";
 
     const previewImg = document.getElementById("summary-preview-img");
     const previewHint = document.getElementById("summary-photo-hint");
@@ -506,10 +562,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // 4. REINICIO DE DISEÑO (EMPEZAR DE NUEVO) Y FLUJO DE CHECKOUT
   // --------------------------------------------------------------------------
   function resetConfigurator(showNotice = true, shouldScroll = true) {
-    state.recipienteId = TXIKI_CONFIG.recipientes[0].id;
+    const firstRec = TXIKI_CONFIG.recipientes[0];
+    state.recipienteId = firstRec.id;
     state.plantas = {};
     state.complementos = {};
-    state.estiloId = TXIKI_CONFIG.estilos[0].id;
+    state.estiloId = firstRec.permiteEstilo ? TXIKI_CONFIG.estilos[0].id : null;
 
     document.getElementById("order-form").reset();
     document.getElementById("email-match-error").hidden = true;

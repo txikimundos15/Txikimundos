@@ -446,6 +446,17 @@ h2 {
   margin-bottom: 22px;
 }
 
+.step-title-row-split {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.step-title-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
 .step-badge {
   width: 34px;
   height: 34px;
