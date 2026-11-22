@@ -7,9 +7,9 @@
 const TXIKI_CONFIG = {
   // 1. DATOS GENERALES Y CONEXIÓN DE PEDIDOS Y CONSULTAS
   marca: "Txikimundos",
-  emailContacto: "hola@txikimundos.es", // Cámbialo por tu email real cuando quieras
+  emailContacto: "txikimundos15@txikimundos.es", // Cámbialo por tu email real cuando quieras
   // Cuando configures Google Sheets + Gmail, pega aquí la URL de tu Apps Script:
-  googleScriptUrl: "",
+  googleScriptUrl: "https://script.google.com/macros/s/AKfycbxCRWMxd6aNO1NnWTjxcAeVvOr7fJsop88_ivBf-61nGWTTCtVvBPMQoCyWwPyo4xCV/exec",
 
   // 2. TEXTOS DE PORTADA (INICIO)
   inicio: {
