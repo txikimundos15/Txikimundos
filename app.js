@@ -545,6 +545,112 @@ document.addEventListener("DOMContentLoaded", () => {
     return { recipiente, estilo, items, total };
   }
 
+  function getSelectedVisualExtras() {
+    const extras = [];
+
+    Object.entries(state.plantas).forEach(([id, qty]) => {
+      const p = TXIKI_CONFIG.plantas.find((item) => item.id === id);
+      if (p && qty > 0) {
+        extras.push({
+          id: p.id,
+          nombre: p.nombre,
+          imagen: p.imagen,
+          cantidad: qty,
+          icono: "🌱"
+        });
+      }
+    });
+
+    Object.entries(state.complementos).forEach(([id, qty]) => {
+      const c = TXIKI_CONFIG.complementos.find((item) => item.id === id);
+      if (c && qty > 0) {
+        extras.push({
+          id: c.id,
+          nombre: c.nombre,
+          imagen: c.imagen,
+          cantidad: qty,
+          icono: c.id.includes("tronco") ? "🪵" : "🪨"
+        });
+      }
+    });
+
+    return extras;
+  }
+
+  function renderSummaryMoodboard(recipiente) {
+    const previewImg = document.getElementById("summary-preview-img");
+    const previewHint = document.getElementById("summary-photo-hint");
+    const frameEl = previewImg.parentElement;
+
+    if (!frameEl.classList.contains("summary-moodboard")) {
+      const placeholderEl = previewImg.nextElementSibling;
+      const mainPieceEl = document.createElement("div");
+      mainPieceEl.className = "summary-main-piece";
+      mainPieceEl.appendChild(previewImg);
+      if (placeholderEl) mainPieceEl.appendChild(placeholderEl);
+
+      const extrasGridEl = document.createElement("div");
+      extrasGridEl.id = "summary-extras-grid";
+      extrasGridEl.className = "summary-extras-grid";
+      extrasGridEl.hidden = true;
+
+      frameEl.classList.add("summary-moodboard");
+      frameEl.appendChild(mainPieceEl);
+      frameEl.appendChild(extrasGridEl);
+    }
+
+    previewImg.style.display = "block";
+    if (previewImg.nextElementSibling) {
+      previewImg.nextElementSibling.style.display = "none";
+    }
+    previewImg.src = recipiente.imagen;
+    previewHint.textContent = recipiente.imagen;
+
+    const extrasGridEl = document.getElementById("summary-extras-grid");
+    const extras = getSelectedVisualExtras();
+
+    if (extras.length === 0) {
+      frameEl.classList.remove("has-extras");
+      extrasGridEl.hidden = true;
+      extrasGridEl.innerHTML = "";
+      return;
+    }
+
+    frameEl.classList.add("has-extras");
+    extrasGridEl.hidden = false;
+    extrasGridEl.dataset.cols = extras.length <= 2 ? "1" : "2";
+
+    const maxTiles = 6;
+    const hasOverflow = extras.length > maxTiles;
+    const visibleExtras = hasOverflow ? extras.slice(0, maxTiles - 1) : extras;
+
+    const tilesHtml = visibleExtras
+      .map(
+        (item) => `
+        <div class="summary-extra-tile" title="${item.cantidad > 1 ? item.cantidad + " × " : ""}${escapeHtml(item.nombre)}">
+          <img src="${item.imagen}" alt="${escapeHtml(item.nombre)}"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="extra-tile-fallback">
+            <span class="extra-tile-icon">${item.icono}</span>
+            <span class="extra-tile-name">${escapeHtml(item.nombre)}</span>
+          </div>
+          ${item.cantidad > 1 ? `<span class="extra-tile-qty">×${item.cantidad}</span>` : ""}
+        </div>`
+      )
+      .join("");
+
+    const overflowHtml = hasOverflow
+      ? `<div class="summary-extra-tile extra-tile-more" title="${extras
+          .slice(maxTiles - 1)
+          .map((e) => (e.cantidad > 1 ? `${e.cantidad} × ${e.nombre}` : e.nombre))
+          .join(", ")}">
+          <span>+${extras.length - (maxTiles - 1)} más</span>
+        </div>`
+      : "";
+
+    extrasGridEl.innerHTML = tilesHtml + overflowHtml;
+  }
+
   function renderSummary() {
     const { recipiente, estilo, items, total } = getOrderBreakdown();
 
@@ -553,12 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `Estilo: ${estilo.nombre}`
       : "Estilo: No disponible en este cristal";
 
-    const previewImg = document.getElementById("summary-preview-img");
-    const previewHint = document.getElementById("summary-photo-hint");
-    previewImg.style.display = "block";
-    previewImg.nextElementSibling.style.display = "none";
-    previewImg.src = recipiente.imagen;
-    previewHint.textContent = recipiente.imagen;
+    renderSummaryMoodboard(recipiente);
 
     const listEl = document.getElementById("summary-items-list");
     const hasPlants = Object.keys(state.plantas).length > 0;
