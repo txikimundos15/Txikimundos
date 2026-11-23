@@ -580,9 +580,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderSummaryMoodboard(recipiente) {
     const previewImg = document.getElementById("summary-preview-img");
     const previewHint = document.getElementById("summary-photo-hint");
-    const frameEl = previewImg.parentElement;
+    const frameEl = previewImg.closest(".summary-photo-frame");
 
-    if (!frameEl.classList.contains("summary-moodboard")) {
+    if (!frameEl.querySelector(".summary-main-piece")) {
       const placeholderEl = previewImg.nextElementSibling;
       const mainPieceEl = document.createElement("div");
       mainPieceEl.className = "summary-main-piece";
@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
     previewImg.src = recipiente.imagen;
     previewHint.textContent = recipiente.imagen;
 
-    const extrasGridEl = document.getElementById("summary-extras-grid");
+    const extrasGridEl = frameEl.querySelector("#summary-extras-grid");
     const extras = getSelectedVisualExtras();
 
     if (extras.length === 0) {
